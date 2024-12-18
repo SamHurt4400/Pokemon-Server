@@ -60,6 +60,7 @@ exports.catchPokemonByPokemonId=async (req,res)=>{
                 pokemon_id:pokemon_id,
                 view: true,
                 catch: true,
+                in_team: !pokemon.in_team
             },{new:true})
             return res.status(200).json(pokemon)
         }
@@ -69,3 +70,29 @@ exports.catchPokemonByPokemonId=async (req,res)=>{
         return res.status(500).json({error});
 }
 }
+
+exports.inTeamByPokemonId=async (req,res)=>{
+    try{
+        const pokemon_id = req.params.pokemon_id;
+        let pokemon = await Pokemon.findOne({"pokemon_id":pokemon_id})
+        if(!pokemon){
+            return res.status(404).json({menssage:"Pokemon not view yet"})
+        }
+        else if(!pokemon.catch){
+            return res.status(404).json({menssage:"Bad request, Pokemon not catch yet"})
+        }
+        else{
+            pokemon = await Pokemon.findOneAndReplace({"pokemon_id":pokemon_id},{
+                pokemon_id:pokemon_id,
+                view: true,
+                catch: true,
+                in_team: !pokemon.in_team
+            },{new:true})
+            return res.status(200).json(pokemon)
+        }
+
+  }catch(error){
+        console.log(error)
+        return res.status(500).json({error});
+  }
+    }
